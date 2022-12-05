@@ -1,7 +1,14 @@
 const Sequelize = require('sequelize');
+const { listen } = require('../app');
 const { Op } = Sequelize;
 
 class Admin {
+    /**
+     *  Returns the profession that earned the most money 
+     * (sum of jobs paid) for any contactor that worked in the query time range.
+     * @param {Object} req HTTP request and has properties for the request query string, parameters, body, and HTTP headers.
+     * @param {Object} res HTTP response that an Express app sends when it gets an HTTP request
+     */
     static async getBestProfession(req, res) {
         try {
             const { Contract, Job, Profile } = req.app.get('models');
@@ -47,6 +54,12 @@ class Admin {
         }
     }
 
+    /**
+     * Returns the clients the paid the most for jobs in the query time period.
+     * limit query parameter should be applied, default limit is 2.
+     * @param {Object} req HTTP request and has properties for the request query string, parameters, body, and HTTP headers.
+     * @param {Object} res HTTP response that an Express app sends when it gets an HTTP request
+     */
     static async getBestClients(req, res) {
         try {
             const { Contract, Job, Profile } = req.app.get('models');
@@ -60,7 +73,7 @@ class Admin {
                     message: 'Start date can not be greather than end Date'
                 })
             }
-            if (limit < 2) {
+            if (limit < 2 || !limit) {
                 limit = 2;
             }
             const ContractWithPrices = await Contract.findAll({
